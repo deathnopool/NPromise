@@ -1,3 +1,4 @@
+// todo, bug: NPromise.resolve(NPromise.resolve(100)).then((value) => console.log("then >>>", value));
 class NPromise
 {
     private state: 'pending'|'resolved'|'rejected' = 'pending';
