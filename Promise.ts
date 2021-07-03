@@ -1,4 +1,5 @@
 // todo, bug: NPromise.resolve(NPromise.resolve(100)).then((value) => console.log("then >>>", value));
+// todo, ts泛型支持
 type RawPromise<T> = Promise<T>;
 class NPromise
 {
