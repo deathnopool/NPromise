@@ -223,9 +223,43 @@ class NPromise
             return NPromise.foreach(value, callback);
         });
     }
+
+    public map(callback: (value?, index?: number) => any): NPromise
+    {
+        return this.then((value) => 
+        {
+            if (!Array.isArray(value))
+            {
+                return value;
+            }
+
+            const result = [];
+            
+            return NPromise.foreach(value, (item, index) => 
+            {
+                return NPromise.then(() => callback(item, index)).then((value) => 
+                {
+                    result.push(value);
+                });
+            }).
+            then(() => result);
+        });
+    }
+
 }
 
 // console.log("start");
+// NPromise.resolve(['this', 'is', 'promise', 'map']).map((item, i) => 
+// {
+//     console.log('this is map callback >>>', item, i);
+
+//     return NPromise.wait(1000*i, item + i);
+// }).
+// then((value) => 
+// {
+//     console.log("then after map >>>", value);
+// });
+
 // NPromise.all(new Array(10).fill(1).map((n, i) => NPromise.reject('error occured'))).
 // then((arr) => 
 // {
