@@ -1,4 +1,5 @@
 // todo, bug: NPromise.resolve(NPromise.resolve(100)).then((value) => console.log("then >>>", value));
+type RawPromise<T> = Promise<T>;
 class NPromise
 {
     private state: 'pending'|'resolved'|'rejected' = 'pending';
@@ -100,7 +101,7 @@ class NPromise
         });
     }
 
-    public static fromRawPromise(promise: Promise<any>): NPromise
+    public static fromRawPromise(promise: RawPromise<any>): NPromise
     {
         return new NPromise((resolve, reject) => 
         {
@@ -281,7 +282,7 @@ class NPromise
         });
     }
 
-    public toRawPromise(): Promise<any>
+    public toRawPromise(): RawPromise<any>
     {
         return new Promise((resolve, reject) => 
         {
