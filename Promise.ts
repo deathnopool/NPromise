@@ -100,6 +100,14 @@ class NPromise
         });
     }
 
+    public static fromRawPromise(promise: Promise<any>): NPromise
+    {
+        return new NPromise((resolve, reject) => 
+        {
+            promise.then((value) => resolve(value), (err) => reject(err));
+        });
+    }
+
     constructor(callback: (resolve: Function, reject?: Function) => any)
     {
         const resolve = (value) => 
@@ -273,9 +281,31 @@ class NPromise
         });
     }
 
+    public toRawPromise(): Promise<any>
+    {
+        return new Promise((resolve, reject) => 
+        {
+            this.then((value) => resolve(value), err => reject(err));
+        });
+    }
 }
 
-// console.log("start");
+console.log("start");
+NPromise.fromRawPromise(new Promise((resolve) => 
+{
+    setTimeout(() => resolve(200), 1000);
+})).
+then((value) => 
+{
+    console.log("then >>>", value);
+
+    return 300;
+}).
+toRawPromise().
+then((value) => 
+{
+    console.log("raw promise then >>>", value);
+});
 // NPromise.race([
 //     new NPromise((resolve) => setTimeout(() => resolve(123), 1000)),
 //     new NPromise((resolve) => setTimeout(() => resolve(456), 2000))

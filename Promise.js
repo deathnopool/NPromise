@@ -87,6 +87,11 @@ class NPromise {
             }
         });
     }
+    static fromRawPromise(promise) {
+        return new NPromise((resolve, reject) => {
+            promise.then((value) => resolve(value), (err) => reject(err));
+        });
+    }
     isPending() {
         return this.state === 'pending';
     }
@@ -178,12 +183,28 @@ class NPromise {
                 then(() => result);
         });
     }
+    toRawPromise() {
+        return new Promise((resolve, reject) => {
+            this.then((value) => resolve(value), err => reject(err));
+        });
+    }
 }
 console.log("start");
-NPromise.race([
-    new NPromise((resolve) => setTimeout(() => resolve(123), 1000)),
-    new NPromise((resolve) => setTimeout(() => resolve(456), 2000))
-]).then((v) => console.log('then >>>', v));
+NPromise.fromRawPromise(new Promise((resolve) => {
+    setTimeout(() => resolve(200), 1000);
+})).
+    then((value) => {
+    console.log("then >>>", value);
+    return 300;
+}).
+    toRawPromise().
+    then((value) => {
+    console.log("raw promise then >>>", value);
+});
+// NPromise.race([
+//     new NPromise((resolve) => setTimeout(() => resolve(123), 1000)),
+//     new NPromise((resolve) => setTimeout(() => resolve(456), 2000))
+// ]).then((v) => console.log('then >>>', v));
 // NPromise.resolve(['this', 'is', 'promise', 'map']).map((item, i) => 
 // {
 //     console.log('this is map callback >>>', item, i);
