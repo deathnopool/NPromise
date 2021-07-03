@@ -73,6 +73,33 @@ class NPromise
 
     }
 
+    public static race(promises: NPromise[]): NPromise
+    {
+        return new NPromise((resolve, reject) => 
+        {
+            let isRejected = false;
+            let isResolved = false;
+            for (let i=0, len=promises.length; i<len; i++)
+            {
+                promises[i].then((value) => 
+                {
+                    if (!isResolved)
+                    {
+                        resolve(value);
+                        isResolved = true;
+                    }
+                }, err => 
+                {
+                    if (!isRejected)
+                    {
+                        reject(err);
+                        isRejected = true;
+                    }
+                });
+            }
+        });
+    }
+
     constructor(callback: (resolve: Function, reject?: Function) => any)
     {
         const resolve = (value) => 
@@ -249,6 +276,10 @@ class NPromise
 }
 
 // console.log("start");
+// NPromise.race([
+//     new NPromise((resolve) => setTimeout(() => resolve(123), 1000)),
+//     new NPromise((resolve) => setTimeout(() => resolve(456), 2000))
+// ]).then((v) => console.log('then >>>', v));
 // NPromise.resolve(['this', 'is', 'promise', 'map']).map((item, i) => 
 // {
 //     console.log('this is map callback >>>', item, i);
