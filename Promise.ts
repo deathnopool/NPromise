@@ -9,6 +9,8 @@ class NPromise
     private thenResolveFunc: Function;
     private thenRejectFunc: Function;
 
+    public static BREAK = function() {};
+
     public static resolve(value?): NPromise
     {
         return new NPromise((resolve) => resolve(value));
@@ -43,7 +45,13 @@ class NPromise
             {
                 return itemCallback(arr[i], i);
             }).
-            then(() => proccess(i+1));
+            then((value) => 
+            {
+                if (value === NPromise.BREAK)
+                    return;
+
+                return proccess(i+1);
+            });
         };
 
         return proccess(0);
@@ -292,22 +300,40 @@ class NPromise
     }
 }
 
-console.log("start");
-NPromise.fromRawPromise(new Promise((resolve) => 
-{
-    setTimeout(() => resolve(200), 1000);
-})).
-then((value) => 
-{
-    console.log("then >>>", value);
+// console.log("start");
+// NPromise.foreach([1, 2, 3, 4, 5, 6], (item, i) => 
+// {
+//     return NPromise.wait(1000, item).then(() => 
+//     {
+//         console.log("foreach >>>", item);
 
-    return 300;
-}).
-toRawPromise().
-then((value) => 
-{
-    console.log("raw promise then >>>", value);
-});
+//         if (item>=3)
+//         {
+//             return NPromise.BREAK;
+//         }
+//     });
+// }).
+// then(() => 
+// {
+//     console.log("end >>>");
+// });
+
+// NPromise.fromRawPromise(new Promise((resolve) => 
+// {
+//     setTimeout(() => resolve(200), 1000);
+// })).
+// then((value) => 
+// {
+//     console.log("then >>>", value);
+
+//     return 300;
+// }).
+// toRawPromise().
+// then((value) => 
+// {
+//     console.log("raw promise then >>>", value);
+// });
+
 // NPromise.race([
 //     new NPromise((resolve) => setTimeout(() => resolve(123), 1000)),
 //     new NPromise((resolve) => setTimeout(() => resolve(456), 2000))
